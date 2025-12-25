@@ -11,7 +11,7 @@ A simple practice website for test automation using Next.js, Bootstrap, and JSON
 ## Getting Started
 
 ```bash
-cd D:\nodejs\practice-site
+git clone https://github.com/salmansrabon/practice-site.git
 npm install
 npm run dev
 ```

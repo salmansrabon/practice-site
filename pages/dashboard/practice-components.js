@@ -48,7 +48,7 @@ export default function PracticeComponentsPage() {
 
           <div className="border rounded-3 p-3 bg-light">
             <h5 className="mb-2">Iframe</h5>
-            <p className="text-muted small mb-3">Embedded page below (example.com).</p>
+            <p className="text-muted small mb-3">Embedded page below.</p>
             <div className="ratio ratio-16x9 border rounded-3 overflow-hidden bg-white">
               <iframe title="Embedded Example" src="http://localhost:3000" style={{ border: '0' }} allowFullScreen></iframe>
             </div>
