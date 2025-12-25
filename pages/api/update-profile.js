@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { firstName, lastName, phoneNumber, gender } = req.body || {};
+  const { firstName, lastName, phoneNumber, gender, photo } = req.body || {};
 
   if (!firstName || !lastName || !phoneNumber || !gender) {
     return res.status(400).json({ error: 'All fields are required' });
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
 
   // Update user profile
-  users[userIndex] = {
+  const updatedUser = {
     ...users[userIndex],
     firstName: String(firstName).trim(),
     lastName: String(lastName).trim(),
@@ -34,7 +34,14 @@ export default async function handler(req, res) {
     updatedAt: new Date().toISOString(),
   };
 
+  // Add photo if provided
+  if (photo) {
+    updatedUser.photo = photo;
+  }
+
+  users[userIndex] = updatedUser;
+
   await writeUsers(users);
 
-  return res.status(200).json({ message: 'Profile updated successfully', user: users[userIndex] });
+  return res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
 }

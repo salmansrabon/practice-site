@@ -14,6 +14,7 @@ export default function ProfilePage({ user: initialUser }) {
     phoneNumber: initialUser?.phoneNumber || '',
     gender: initialUser?.gender || 'Male',
   });
+  const [photoPreview, setPhotoPreview] = useState(initialUser?.photo || null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,8 +35,32 @@ export default function ProfilePage({ user: initialUser }) {
       phoneNumber: user.phoneNumber,
       gender: user.gender,
     });
+    setPhotoPreview(user.photo || null);
     setError('');
     setSuccess('');
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setPhotoPreview(event.target.result);
+      setForm((f) => ({ ...f, photo: event.target.result }));
+      setError('');
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = async () => {
@@ -83,6 +108,30 @@ export default function ProfilePage({ user: initialUser }) {
             <div className="alert alert-warning">No user data</div>
           ) : isEdit ? (
             <form>
+              <div className="mb-4 text-center">
+                <div className="mb-3">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Profile" className="rounded-circle" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                  ) : (
+                    <div className="rounded-circle d-inline-flex align-items-center justify-content-center bg-light" style={{ width: '120px', height: '120px' }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-person-fill text-muted" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <label htmlFor="photoInput" className="btn btn-outline-primary btn-sm">
+                  Upload Photo
+                </label>
+                <input
+                  id="photoInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="d-none"
+                />
+              </div>
+
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">First Name</label>
@@ -166,14 +215,27 @@ export default function ProfilePage({ user: initialUser }) {
               </div>
             </form>
           ) : (
-            <ul className="list-group list-group-flush">
+            <>
+              <div className="text-center mb-4">
+                {user.photo ? (
+                  <img src={user.photo} alt="Profile" className="rounded-circle" style={{ width: '120px', height: '120px', objectFit: 'cover' }} />
+                ) : (
+                  <div className="rounded-circle d-inline-flex align-items-center justify-content-center bg-light" style={{ width: '120px', height: '120px' }}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-person-fill text-muted" viewBox="0 0 16 16">
+                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <ul className="list-group list-group-flush">
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">First Name</span><span className="fw-semibold">{user.firstName}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Last Name</span><span className="fw-semibold">{user.lastName}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Email</span><span className="fw-semibold">{user.email}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Phone</span><span className="fw-semibold">{user.phoneNumber}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Gender</span><span className="fw-semibold">{user.gender}</span></li>
-              <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Joined</span><span className="fw-semibold">{new Date(user.createdAt).toLocaleString()}</span></li>
+              <li className="list-group-item d-flex justify-content-between" suppressHydrationWarning><span className="text-muted">Joined</span><span className="fw-semibold">{new Date(user.createdAt).toLocaleString()}</span></li>
             </ul>
+            </>
           )}
         </div>
       </div>
