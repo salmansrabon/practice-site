@@ -4,9 +4,10 @@
     "firstName": "John",
     "lastName": "Sena",
     "email": "johnsena@test.com",
-    "phoneNumber": "01501121111",
+    "phoneNumber": "01501121112",
     "gender": "Male",
-    "passwordHash": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
-    "createdAt": "2025-12-25T12:46:35.976Z"
+    "passwordHash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "createdAt": "2025-12-25T12:46:35.976Z",
+    "updatedAt": "2025-12-25T13:04:38.537Z"
   }
 ]
