@@ -9,9 +9,11 @@ export default function UsersPage() {
   const [rows, setRows] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const load = async () => {
     setLoading(true);
+    setError('');
     try {
       const res = await fetch(`/api/users?q=${encodeURIComponent(q)}&page=${page}&pageSize=${pageSize}`);
       const data = await res.json();
@@ -21,6 +23,7 @@ export default function UsersPage() {
     } catch (e) {
       setRows([]);
       setTotalPages(1);
+      setError(e.message);
     } finally {
       setLoading(false);
     }
@@ -34,55 +37,76 @@ export default function UsersPage() {
   return (
     <DashboardLayout>
       <div className="card shadow-lg border-0 rounded-4">
-      <div className="card-body p-4">
-        <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
-          <div>
-            <h2 className="mb-0">Registered Users</h2>
-            <div className="text-muted small">Search, paginate, and review registered accounts.</div>
+        <div className="card-body p-4">
+          <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+            <div>
+              <h2 className="mb-0">Registered Users</h2>
+              <div className="text-muted small">Search, paginate, and review registered accounts.</div>
+            </div>
+            <div className="input-group" style={{ maxWidth: 260 }}>
+              <input className="form-control" placeholder="Search" value={q} onChange={(e) => { setPage(1); setQ(e.target.value); }} />
+              <button className="btn btn-outline-primary" onClick={load} disabled={loading}>Refresh</button>
+            </div>
           </div>
-          <div className="input-group" style={{ maxWidth: 260 }}>
-            <input className="form-control" placeholder="Search" value={q} onChange={(e) => { setPage(1); setQ(e.target.value); }} />
-            <button className="btn btn-outline-primary" onClick={load} disabled={loading}>Refresh</button>
-          </div>
-        </div>
-        <div className="table-responsive">
-          <table className="table table-striped table-hover align-middle">
-            <thead className="table-light">
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Gender</th>
-                <th>Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.firstName}</td>
-                  <td>{u.lastName}</td>
-                  <td>{u.email}</td>
-                  <td>{u.phoneNumber}</td>
-                  <td><span className="badge bg-primary-subtle text-primary-emphasis">{u.gender}</span></td>
-                  <td>{new Date(u.createdAt).toLocaleString()}</td>
-                </tr>
-              ))}
-              {rows.length === 0 && (
+          {error && <div className="alert alert-danger">{error}</div>}
+          <div className="table-responsive">
+            <table className="table table-striped table-hover align-middle">
+              <thead className="table-light">
                 <tr>
-                  <td colSpan={6} className="text-center">{loading ? 'Loading...' : 'No data'}</td>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Gender</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="d-flex align-items-center gap-2">
-          <button className="btn btn-outline-secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>Prev</button>
-          <span className="text-muted">Page {page} / {totalPages}</span>
-          <button className="btn btn-outline-secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Next</button>
+              </thead>
+              <tbody>
+                {rows.map((u) => (
+                  <tr key={u.id}>
+                    <td>{u.firstName}</td>
+                    <td>{u.lastName}</td>
+                    <td>{u.email}</td>
+                    <td>{u.phoneNumber}</td>
+                    <td><span className="badge bg-primary-subtle text-primary-emphasis">{u.gender}</span></td>
+                    <td>{new Date(u.createdAt).toLocaleString()}</td>
+                    <td>
+                      <a className="btn btn-sm btn-outline-primary me-2" href={`/dashboard/users/${u.id}`}>View</a>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={async () => {
+                          if (!confirm(`Delete user ${u.email}?`)) return;
+                          try {
+                            const res = await fetch(`/api/users/${u.id}`, { method: 'DELETE' });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.error || 'Delete failed');
+                            load();
+                          } catch (err) {
+                            setError(err.message);
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="text-center">{loading ? 'Loading...' : 'No data'}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="d-flex align-items-center gap-2">
+            <button className="btn btn-outline-secondary" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>Prev</button>
+            <span className="text-muted">Page {page} / {totalPages}</span>
+            <button className="btn btn-outline-secondary" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>Next</button>
+          </div>
         </div>
       </div>
-    </div>
     </DashboardLayout>
   );
 }
