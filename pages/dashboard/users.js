@@ -8,6 +8,7 @@ export default function UsersPage() {
   const [pageSize] = useState(10);
   const [rows, setRows] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,9 +21,11 @@ export default function UsersPage() {
       if (!res.ok) throw new Error(data.error || 'Failed');
       setRows(data.data);
       setTotalPages(data.totalPages);
+      setTotal(data.total || 0);
     } catch (e) {
       setRows([]);
       setTotalPages(1);
+      setTotal(0);
       setError(e.message);
     } finally {
       setLoading(false);
@@ -40,7 +43,7 @@ export default function UsersPage() {
         <div className="card-body p-4">
           <div className="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
             <div>
-              <h2 className="mb-0">Registered Users</h2>
+              <h2 className="mb-0">Registered Users <span className="badge bg-secondary ms-2">{total}</span></h2>
               <div className="text-muted small">Search, paginate, and review registered accounts.</div>
             </div>
             <div className="input-group" style={{ maxWidth: 260 }}>

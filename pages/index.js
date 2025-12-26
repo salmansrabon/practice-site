@@ -36,7 +36,7 @@ export default function LoginPage() {
       <div className="col-12 col-lg-5">
         <div className="text-center mb-4">
           <h1 className="fw-bold">Welcome Back</h1>
-          <p className="text-muted mb-0">Login to access your dashboard and users table.</p>
+          <p className="text-muted mb-0">Login to access your dashboard</p>
         </div>
         <div className="card shadow-lg border-0 rounded-4">
           <div className="card-body p-4">
