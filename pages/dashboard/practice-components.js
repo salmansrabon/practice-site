@@ -1,9 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
+import ReactDatePicker from 'react-datepicker';
 import DashboardLayout from '../../components/DashboardLayout';
 const { getUserFromReq } = require('../../lib/auth');
 
+const pad = (n) => `${n}`.padStart(2, '0');
+const formatDateTimeLocal = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+
+const ReadOnlyInput = forwardRef(({ value, onClick, onFocus }, ref) => (
+  <input
+    className="form-control"
+    value={value || ''}
+    onClick={onClick}
+    onFocus={onFocus}
+    readOnly
+    ref={ref}
+  />
+));
+ReadOnlyInput.displayName = 'ReadOnlyInput';
+
 export default function PracticeComponentsPage() {
   const [showModal, setShowModal] = useState(false);
+  const [dateTime, setDateTime] = useState(() => formatDateTimeLocal(new Date()));
+  const [dateOnly, setDateOnly] = useState(new Date());
 
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
@@ -88,6 +106,32 @@ export default function PracticeComponentsPage() {
               <button className="btn btn-warning" onDoubleClick={handleDoubleClick}>Double Click Me</button>
               <button className="btn btn-info" onContextMenu={handleRightClick}>Right Click Me</button>
               <button className="btn btn-danger" onClick={handleClickOrEnter}>Click or Press Enter</button>
+            </div>
+          </div>
+
+          <div className="border rounded-3 p-3 bg-light mt-3">
+            <h5 className="mb-2">Datepickers</h5>
+            <p className="text-muted small mb-3">One with date & time, one date-only and readonly.</p>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Date & Time</label>
+                <input
+                  type="datetime-local"
+                  className="form-control"
+                  value={dateTime}
+                  onChange={(e) => setDateTime(e.target.value)}
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Date Only (readonly)</label> <br/>
+                <ReactDatePicker
+                  selected={dateOnly}
+                  onChange={(val) => setDateOnly(val)}
+                  dateFormat="P"
+                  placeholderText="Select date"
+                  customInput={<ReadOnlyInput />}
+                />
+              </div>
             </div>
           </div>
         </div>
