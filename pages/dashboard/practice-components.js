@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, forwardRef } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import DashboardLayout from '../../components/DashboardLayout';
 const { getUserFromReq } = require('../../lib/auth');
@@ -22,20 +22,10 @@ export default function PracticeComponentsPage() {
   const [showModal, setShowModal] = useState(false);
   const [dateTime, setDateTime] = useState(() => formatDateTimeLocal(new Date()));
   const [dateOnly, setDateOnly] = useState(new Date());
+  const [dateOnlyEditable, setDateOnlyEditable] = useState(new Date());
   const [modalMessage, setModalMessage] = useState('');
 
-  useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        handleClickOrEnter();
-      }
-    };
 
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleGlobalKeyDown);
-    };
-  }, []);
 
   const openNewTab = () => {
     window.open('https://example.com', '_blank', 'noopener,noreferrer');
@@ -53,9 +43,6 @@ export default function PracticeComponentsPage() {
     alert('context clicked!');
   };
 
-  const handleClickOrEnter = () => {
-    alert('Enter event pressed!');
-  };
 
   const openModal = () => {
     setModalMessage('');
@@ -111,7 +98,7 @@ export default function PracticeComponentsPage() {
             <h5 className="mb-2">Datepickers</h5>
             <p className="text-muted small mb-3">One with date & time, one date-only and readonly.</p>
             <div className="row g-3">
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Date & Time</label>
                 <input
                   type="datetime-local"
@@ -120,7 +107,7 @@ export default function PracticeComponentsPage() {
                   onChange={(e) => setDateTime(e.target.value)}
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Date Only (readonly)</label> <br/>
                 <ReactDatePicker
                   selected={dateOnly}
@@ -128,6 +115,15 @@ export default function PracticeComponentsPage() {
                   dateFormat="P"
                   placeholderText="Select date"
                   customInput={<ReadOnlyInput />}
+                />
+              </div>
+              <div className="col-md-4">
+                <label className="form-label">Date Only (editable)</label> <br/>
+                <ReactDatePicker
+                  selected={dateOnlyEditable}
+                  onChange={(val) => setDateOnlyEditable(val)}
+                  dateFormat="P"
+                  placeholderText="Select date"
                 />
               </div>
             </div>
@@ -147,7 +143,6 @@ export default function PracticeComponentsPage() {
             <div className="d-flex flex-wrap gap-2">
               <button id="doubleClickBtn" className="btn btn-warning" onDoubleClick={handleDoubleClick}>Double Click Me</button>
               <button id="rightClickBtn" className="btn btn-info" onContextMenu={handleRightClick}>Right Click Me</button>
-              <button id="clickOrEnterBtn" className="btn btn-danger" onClick={handleClickOrEnter}>Click or Press Enter</button>
             </div>
           </div>
 
