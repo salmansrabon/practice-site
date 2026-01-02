@@ -245,7 +245,7 @@ export default function ProfilePage({ user: initialUser }) {
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Email</span><span className="fw-semibold">{user.email}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Phone</span><span className="fw-semibold">{user.phoneNumber}</span></li>
               <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Gender</span><span className="fw-semibold">{user.gender}</span></li>
-              <li className="list-group-item d-flex justify-content-between" suppressHydrationWarning><span className="text-muted">Joined</span><span className="fw-semibold">{new Date(user.createdAt).toLocaleString()}</span></li>
+              <li className="list-group-item d-flex justify-content-between"><span className="text-muted">Joined</span><span className="fw-semibold">{new Date(user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span></li>
             </ul>
             </>
           )}
